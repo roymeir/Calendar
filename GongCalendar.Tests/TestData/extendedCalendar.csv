@@ -1,0 +1,83 @@
+Alice,"Morning standup",08:00,08:30
+Alice,"Product review",09:00,10:30
+Alice,"Lunch with team",12:30,13:30
+Alice,"Client presentation",14:00,15:30
+Alice,"Code review",16:00,17:00
+Alice,"Evening sync",18:00,18:30
+Jack,"Early bird meeting",07:00,07:45
+Jack,"Sales call",08:00,09:00
+Jack,"Demo preparation",09:30,11:00
+Jack,"Lunch",12:00,13:00
+Jack,"Customer meeting",13:30,15:00
+Jack,"Report writing",15:30,17:00
+Jack,"Team sync",17:30,18:30
+Bob,"Morning planning",07:30,09:00
+Bob,"Sprint review",09:00,10:30
+Bob,"Coffee break",10:30,11:00
+Bob,"Architecture discussion",11:00,12:30
+Bob,"Lunch break",13:00,14:00
+Bob,"Performance review",14:30,16:00
+Bob,"Documentation",16:30,18:00
+Charlie,"Early meeting",07:00,08:00
+Charlie,"Development time",08:30,10:00
+Charlie,"Standup",10:00,10:30
+Charlie,"Pair programming",11:00,13:00
+Charlie,"Lunch",13:00,14:00
+Charlie,"Bug fixing",14:30,16:30
+Charlie,"Team meeting",17:00,18:00
+Diana,"Design session",08:00,10:00
+Diana,"User research",10:30,12:00
+Diana,"Lunch with Jack",12:00,13:00
+Diana,"Prototype review",13:30,15:00
+Diana,"Stakeholder meeting",15:30,17:30
+Diana,"Creative time",18:00,19:00
+Eve,"Security audit",07:00,09:00
+Eve,"Vendor call",09:30,10:30
+Eve,"Code review",11:00,12:00
+Eve,"Lunch",12:00,13:00
+Eve,"Penetration testing",13:30,15:30
+Eve,"Documentation",16:00,17:30
+Eve,"On-call prep",18:00,19:00
+Frank,"Morning emails",07:00,08:00
+Frank,"Team standup",08:00,08:30
+Frank,"Client workshop",09:00,11:30
+Frank,"Lunch meeting",12:00,13:30
+Frank,"Strategy session",14:00,16:00
+Frank,"Budget review",16:30,18:00
+Frank,"Evening calls",18:30,19:00
+Grace,"Early workout",07:00,08:00
+Grace,"Team sync",08:30,09:30
+Grace,"Project planning",10:00,12:00
+Grace,"Working lunch",12:00,13:00
+Grace,"Implementation",13:30,15:30
+Grace,"Testing",16:00,17:30
+Grace,"Deployment",18:00,19:00
+Henry,"Morning briefing",07:30,08:30
+Henry,"Technical discussion",09:00,10:30
+Henry,"Architecture review",11:00,12:30
+Henry,"Lunch",12:30,13:30
+Henry,"Coding session",14:00,16:00
+Henry,"Code review",16:30,17:30
+Henry,"Team retrospective",18:00,19:00
+Iris,"Sales pipeline review",08:00,09:30
+Iris,"Customer calls",10:00,11:30
+Iris,"Lunch with Diana",12:00,13:00
+Iris,"Proposal writing",13:30,15:00
+Iris,"Contract negotiation",15:30,17:00
+Iris,"Follow-up emails",17:30,19:00
+Kevin,"Infrastructure check",07:00,08:00
+Kevin,"Incident response",08:30,10:00
+Kevin,"Team meeting",10:00,10:30
+Kevin,"System upgrade",11:00,13:00
+Kevin,"Quick lunch",13:00,13:30
+Kevin,"Monitoring setup",14:00,16:00
+Kevin,"Documentation",16:30,18:00
+Kevin,"On-call handoff",18:30,19:00
+Laura,"Morning meditation",07:00,07:30
+Laura,"Executive meeting",08:00,09:30
+Laura,"Department sync",10:00,11:00
+Laura,"Budget planning",11:30,13:00
+Laura,"Working lunch",13:00,14:00
+Laura,"HR discussion",14:30,15:30
+Laura,"Strategy review",16:00,17:30
+Laura,"Evening planning",18:00,19:00
