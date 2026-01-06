@@ -49,15 +49,4 @@ public class CalendarScheduler
         return slots.Select(s => (s.Start, s.End)).ToList();
     }
 
-    /// <summary>
-    /// Extension method: Gets working hours configuration.
-    /// This allows clients to discover what hours are being used.
-    /// Useful for scaling to multiple time zones or business rules.
-    /// </summary>
-    public (TimeOnly Start, TimeOnly End) GetWorkingHours()
-    {
-        // If we need to expose this, we'd need to add it to IAvailabilityFinder
-        // For now, return the default
-        return (new TimeOnly(7, 0), new TimeOnly(19, 0));
-    }
 }

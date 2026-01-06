@@ -11,18 +11,29 @@ public class Program
     {
         try
         {
+            // Configuration - All adjustable settings in one place
+            var config = new SchedulerConfiguration
+            {
+                CalendarFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "calendar.csv"),
+                WorkingHoursStart = new TimeOnly(7, 0),
+                WorkingHoursEnd = new TimeOnly(19, 0),
+                EnableCaching = false  // Set to true for multiple searches (uses ~800KB for 20K events)
+            };
+
+            // Validate configuration
+            config.Validate();
+
             // Setup - Manual Dependency Injection
-            var calendarFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "calendar.csv");
+            var baseReader = new Services.CsvCalendarDataReader(config.CalendarFilePath);
+            ICalendarDataReader dataReader = config.EnableCaching
+                ? new Services.CachingCalendarDataReader(baseReader)
+                : baseReader;
 
-            // Option 1: Streaming without cache (best for single searches, minimal memory)
-            ICalendarDataReader dataReader = new Services.CsvCalendarDataReader(calendarFilePath);
-
-            // Option 2: With caching (best for multiple searches, uses ~800KB for 20K events)
-            // Uncomment the lines below to enable caching:
-            // var baseReader = new Services.CsvCalendarDataReader(calendarFilePath);
-            // ICalendarDataReader dataReader = new Services.CachingCalendarDataReader(baseReader);
-
-            IAvailabilityFinder availabilityFinder = new Services.AvailabilityFinderService(dataReader);
+            IAvailabilityFinder availabilityFinder = new Services.AvailabilityFinderService(
+                dataReader,
+                config.WorkingHoursStart,
+                config.WorkingHoursEnd
+            );
             var scheduler = new CalendarScheduler(availabilityFinder);
 
             // Example 1: Find slots for Alice and Jack for 60-minute meeting
