@@ -56,3 +56,8 @@ Thumbs.db
 *.user
 *.userosscache
 *.sln.docstates
+OPTIMIZATIONS.md
+CLAUDE.md
+.claude/settings.local.json
+TEST_PLAN.md
+TEST_PLAN_FOCUSED.md
