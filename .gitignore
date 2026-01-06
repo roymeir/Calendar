@@ -61,3 +61,4 @@ CLAUDE.md
 .claude/settings.local.json
 TEST_PLAN.md
 TEST_PLAN_FOCUSED.md
+test_extended.ps1

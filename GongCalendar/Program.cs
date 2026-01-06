@@ -11,19 +11,16 @@ public class Program
     {
         try
         {
-            // Configuration - All adjustable settings in one place
             var config = new SchedulerConfiguration
             {
                 CalendarFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "calendar.csv"),
                 WorkingHoursStart = new TimeOnly(7, 0),
                 WorkingHoursEnd = new TimeOnly(19, 0),
-                EnableCaching = false  // Set to true for multiple searches (uses ~800KB for 20K events)
+                EnableCaching = false
             };
 
-            // Validate configuration
             config.Validate();
 
-            // Setup - Manual Dependency Injection
             var baseReader = new Services.CsvCalendarDataReader(config.CalendarFilePath);
             ICalendarDataReader dataReader = config.EnableCaching
                 ? new Services.CachingCalendarDataReader(baseReader)
@@ -36,7 +33,7 @@ public class Program
             );
             var scheduler = new CalendarScheduler(availabilityFinder);
 
-            // Example 1: Find slots for Alice and Jack for 60-minute meeting
+            // Example 1: Alice & Jack - 60 minute meeting
             Console.WriteLine("Example 1: Alice & Jack - 60 minute meeting");
             Console.WriteLine("=" + new string('-', 48));
             var people1 = new List<string> { "Alice", "Jack" };

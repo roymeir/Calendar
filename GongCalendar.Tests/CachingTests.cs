@@ -20,19 +20,15 @@ public class CachingTests
     [Fact]
     public void ReadCalendarEvents_FirstCall_LoadsAndCachesData()
     {
-        // Arrange
         var csvPath = GetTestDataPath("calendar.csv");
         var baseReader = new CsvCalendarDataReader(csvPath);
         var cachingReader = new CachingCalendarDataReader(baseReader);
 
-        // Assert - Initially not cached
         Assert.False(cachingReader.IsCached);
         Assert.Equal(0, cachingReader.CachedEventCount);
 
-        // Act
         var events = cachingReader.ReadCalendarEvents().ToList();
 
-        // Assert - After first call, should be cached
         Assert.True(cachingReader.IsCached);
         Assert.Equal(12, cachingReader.CachedEventCount); // calendar.csv has 12 events
         Assert.Equal(12, events.Count);
@@ -41,7 +37,6 @@ public class CachingTests
     [Fact]
     public void ReadCalendarEvents_SecondCall_UsesCacheNotInnerReader()
     {
-        // Arrange - Create a mock reader that tracks how many times it's called
         var callCount = 0;
         var mockEvents = new List<CalendarEvent>
         {
@@ -52,11 +47,9 @@ public class CachingTests
         var mockReader = new MockCalendarDataReader(mockEvents, () => callCount++);
         var cachingReader = new CachingCalendarDataReader(mockReader);
 
-        // Act - Call twice
         var firstCall = cachingReader.ReadCalendarEvents().ToList();
         var secondCall = cachingReader.ReadCalendarEvents().ToList();
 
-        // Assert - Inner reader should only be called once
         Assert.Equal(1, callCount);
         Assert.Equal(2, firstCall.Count);
         Assert.Equal(2, secondCall.Count);
@@ -69,7 +62,6 @@ public class CachingTests
     [Fact]
     public void ReadCalendarEvents_AfterClearCache_ReloadsFromSource()
     {
-        // Arrange
         var callCount = 0;
         var mockEvents = new List<CalendarEvent>
         {
@@ -79,7 +71,6 @@ public class CachingTests
         var mockReader = new MockCalendarDataReader(mockEvents, () => callCount++);
         var cachingReader = new CachingCalendarDataReader(mockReader);
 
-        // Act
         var firstCall = cachingReader.ReadCalendarEvents().ToList();
         Assert.Equal(1, callCount);
         Assert.True(cachingReader.IsCached);
@@ -92,7 +83,6 @@ public class CachingTests
         // Call again after clearing
         var secondCall = cachingReader.ReadCalendarEvents().ToList();
 
-        // Assert - Inner reader should be called twice (once before clear, once after)
         Assert.Equal(2, callCount);
         Assert.True(cachingReader.IsCached);
         Assert.Single(secondCall);
@@ -101,7 +91,6 @@ public class CachingTests
     [Fact]
     public void ReadCalendarEvents_MultipleConcurrentCalls_OnlyLoadsOnce()
     {
-        // Arrange
         var callCount = 0;
         var mockEvents = new List<CalendarEvent>
         {
@@ -117,7 +106,6 @@ public class CachingTests
 
         var cachingReader = new CachingCalendarDataReader(mockReader);
 
-        // Act - Launch 10 threads that all try to read simultaneously
         var tasks = new List<Task<List<CalendarEvent>>>();
         for (int i = 0; i < 10; i++)
         {
@@ -127,7 +115,6 @@ public class CachingTests
         // Wait for all threads to complete
         Task.WaitAll(tasks.ToArray());
 
-        // Assert - Despite 10 concurrent calls, inner reader should only be called once
         Assert.Equal(1, callCount);
 
         // All threads should get the same data

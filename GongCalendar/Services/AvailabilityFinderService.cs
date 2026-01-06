@@ -54,27 +54,19 @@ public class AvailabilityFinderService : IAvailabilityFinder
     /// <returns>List of time slots when meeting can start</returns>
     public List<TimeSlot> FindAvailableSlots(List<string> personList, TimeSpan eventDuration)
     {
-        // Validation
         if (personList == null || personList.Count == 0)
             return new List<TimeSlot>();
 
         var workingHoursDuration = _workingHoursEnd.ToTimeSpan() - _workingHoursStart.ToTimeSpan();
         if (eventDuration > workingHoursDuration)
-            return new List<TimeSlot>(); // Meeting longer than working hours
+            return new List<TimeSlot>();
 
         if (eventDuration <= TimeSpan.Zero)
             throw new ArgumentException("Event duration must be positive", nameof(eventDuration));
 
-        // Step 1: Get all busy slots for specified people
         var busySlots = GetBusySlotsForPeople(personList);
-
-        // Step 2: Merge overlapping busy slots
         var mergedBusySlots = MergeBusySlots(busySlots);
-
-        // Step 3: Invert busy slots to get free slots
         var freeSlots = InvertToFreeSlots(mergedBusySlots);
-
-        // Step 4: Adjust free slots for meeting duration and filter zero-length
         var availableSlots = AdjustForMeetingDuration(freeSlots, eventDuration);
 
         return availableSlots;
@@ -96,26 +88,18 @@ public class AvailabilityFinderService : IAvailabilityFinder
         var allEvents = _dataReader.ReadCalendarEvents();
         var busySlots = new List<TimeSlot>();
 
-        // Create a HashSet for faster person name lookups (O(1) vs O(n))
-        // This improves scalability when dealing with many people
         var peopleSet = new HashSet<string>(
             personList.Select(p => p.Trim()),
             StringComparer.OrdinalIgnoreCase
         );
 
-        // Filter events for specified people
-        // No .ToList() needed - iterate directly for lazy evaluation
-        // This combines with streaming CSV reader for maximum memory efficiency
-        var relevantEvents = allEvents
-            .Where(e => peopleSet.Contains(e.PersonName));
+        var relevantEvents = allEvents.Where(e => peopleSet.Contains(e.PersonName));
 
         foreach (var evt in relevantEvents)
         {
-            // Clip events to working hours
             var start = evt.StartTime < _workingHoursStart ? _workingHoursStart : evt.StartTime;
             var end = evt.EndTime > _workingHoursEnd ? _workingHoursEnd : evt.EndTime;
 
-            // Only add if there's actual time within working hours
             if (end > start)
             {
                 busySlots.Add(new TimeSlot(start, end));
@@ -145,11 +129,9 @@ public class AvailabilityFinderService : IAvailabilityFinder
         if (busySlots.Count == 0)
             return new List<TimeSlot>();
 
-        // Sort by start time - O(n log n)
         var sortedSlots = busySlots.OrderBy(s => s.Start).ToList();
         var merged = new List<TimeSlot> { sortedSlots[0] };
 
-        // Single pass merge - O(n)
         for (int i = 1; i < sortedSlots.Count; i++)
         {
             var lastMerged = merged[merged.Count - 1];
@@ -157,12 +139,10 @@ public class AvailabilityFinderService : IAvailabilityFinder
 
             if (lastMerged.CanMergeWith(current))
             {
-                // Replace last merged slot with expanded version
                 merged[merged.Count - 1] = lastMerged.MergeWith(current);
             }
             else
             {
-                // No overlap - add as new slot
                 merged.Add(current);
             }
         }
@@ -193,17 +173,14 @@ public class AvailabilityFinderService : IAvailabilityFinder
 
         foreach (var busySlot in busySlots.OrderBy(s => s.Start))
         {
-            // If there's a gap before this busy slot, add it as free time
             if (currentTime < busySlot.Start)
             {
                 freeSlots.Add(new TimeSlot(currentTime, busySlot.Start));
             }
 
-            // Move current time to end of this busy slot
             currentTime = busySlot.End > currentTime ? busySlot.End : currentTime;
         }
 
-        // Add remaining free time after last busy slot
         if (currentTime < _workingHoursEnd)
         {
             freeSlots.Add(new TimeSlot(currentTime, _workingHoursEnd));
@@ -238,21 +215,15 @@ public class AvailabilityFinderService : IAvailabilityFinder
 
         foreach (var freeSlot in freeSlots)
         {
-            // Calculate latest time a meeting can START in this free slot
-            // If meeting starts at latestStartTime, it ends exactly at freeSlot.End
             var latestStartTime = freeSlot.End.Add(-eventDuration);
 
-            // Check if there's enough time for the meeting (includes exact fits)
             if (latestStartTime >= freeSlot.Start)
             {
-                // There's a window where the meeting can start (may be zero-length)
                 availableSlots.Add(new TimeSlot(
                     freeSlot.Start,
                     TimeOnly.FromTimeSpan(latestStartTime.ToTimeSpan())
                 ));
             }
-            // Only filter out slots where meeting doesn't fit at all
-            // (latestStartTime < freeSlot.Start means gap is too small)
         }
 
         return availableSlots;

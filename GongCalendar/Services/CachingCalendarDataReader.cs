@@ -51,7 +51,6 @@ public class CachingCalendarDataReader : ICalendarDataReader
         {
             if (_cache == null)
             {
-                // First access: load and cache all events
                 _cache = _innerReader.ReadCalendarEvents().ToList();
             }
         }
